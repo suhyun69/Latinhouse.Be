@@ -24,9 +24,9 @@ hs_err_pid*
 replay_pid*
 
 # Build output
-build/
-out/
-target/
+/build/
+/out/
+/target/
 
 # Gradle
 .gradle/

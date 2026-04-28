@@ -35,10 +35,24 @@ public class LessonService implements
     @Override
     public LessonAppResponse create(CreateLessonAppRequest appReq) {
         Lesson lesson = Lesson.builder()
-                .name(appReq.getName())
+                .title(appReq.getTitle())
+                .genre(appReq.getGenre())
+                .region(appReq.getRegion())
+                .instructorLo(appReq.getInstructorLo())
+                .instructorLa(appReq.getInstructorLa())
                 .startDateTime(appReq.getStartDateTime())
                 .endDateTime(appReq.getEndDateTime())
+                .dateTimeSubTexts(appReq.getDateTimeSubTexts())
+                .place(appReq.getPlace())
+                .placeUrl(appReq.getPlaceUrl())
                 .price(appReq.getPrice())
+                .maxDiscountAmount(appReq.getMaxDiscountAmount())
+                .discountSubTexts(appReq.getDiscountSubTexts())
+                .bank(appReq.getBank())
+                .accountNumber(appReq.getAccountNumber())
+                .accountOwner(appReq.getAccountOwner())
+                .discounts(appReq.getDiscounts())
+                .contacts(appReq.getContacts())
                 .build();
 
         return new LessonAppResponse(createLessonPort.create(lesson));
@@ -65,10 +79,24 @@ public class LessonService implements
 
         Lesson updated = Lesson.builder()
                 .no(existing.getNo())
-                .name(appReq.getName())
+                .title(appReq.getTitle())
+                .genre(appReq.getGenre())
+                .region(appReq.getRegion())
+                .instructorLo(appReq.getInstructorLo())
+                .instructorLa(appReq.getInstructorLa())
                 .startDateTime(appReq.getStartDateTime())
                 .endDateTime(appReq.getEndDateTime())
+                .dateTimeSubTexts(appReq.getDateTimeSubTexts())
+                .place(appReq.getPlace())
+                .placeUrl(appReq.getPlaceUrl())
                 .price(appReq.getPrice())
+                .maxDiscountAmount(appReq.getMaxDiscountAmount())
+                .discountSubTexts(appReq.getDiscountSubTexts())
+                .bank(appReq.getBank())
+                .accountNumber(appReq.getAccountNumber())
+                .accountOwner(appReq.getAccountOwner())
+                .discounts(appReq.getDiscounts())
+                .contacts(appReq.getContacts())
                 .build();
 
         return new LessonAppResponse(updateLessonPort.update(updated));

@@ -1,5 +1,6 @@
 package com.latinhouse.api.lesson.adapter.in.web.request;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,13 +9,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 public class UpdateLessonWebRequest {
 
     @NotBlank
-    private String name;
+    private String title;
+
+    @NotBlank
+    @Pattern(regexp = "^(S|B)$", message = "must be 'S' or 'B'")
+    private String genre;
+
+    @NotBlank
+    @Pattern(regexp = "^(GN|HD)$", message = "must be 'GN' or 'HD'")
+    private String region;
+
+    private String instructorLo;
+    private String instructorLa;
 
     @NotBlank
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
@@ -32,7 +45,25 @@ public class UpdateLessonWebRequest {
     @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
     private String endTime;
 
+    private List<String> dateTimeSubTexts;
+
+    private String place;
+    private String placeUrl;
+
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
+
+    private BigDecimal maxDiscountAmount;
+    private List<String> discountSubTexts;
+
+    private String bank;
+    private String accountNumber;
+    private String accountOwner;
+
+    @Valid
+    private List<DiscountWebRequest> discounts;
+
+    @Valid
+    private List<ContactWebRequest> contacts;
 }
