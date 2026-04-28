@@ -74,6 +74,7 @@ public class CreateLessonAppRequest {
                                 .build())
                         .toList();
 
+
         return CreateLessonAppRequest.builder()
                 .title(webReq.getTitle())
                 .genre(Genre.of(webReq.getGenre()))

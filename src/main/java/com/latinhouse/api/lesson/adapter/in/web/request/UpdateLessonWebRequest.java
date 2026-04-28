@@ -62,8 +62,37 @@ public class UpdateLessonWebRequest {
     private String accountOwner;
 
     @Valid
-    private List<DiscountWebRequest> discounts;
+    private List<Discount> discounts;
 
     @Valid
-    private List<ContactWebRequest> contacts;
+    private List<Contact> contacts;
+
+    @Getter
+    @NoArgsConstructor
+    public static class Discount {
+
+        @NotBlank
+        @Pattern(regexp = "^(E|S)$", message = "must be 'E' or 'S'")
+        private String type;
+
+        private String condition;
+
+        @NotNull
+        @DecimalMin(value = "0.0", inclusive = false)
+        private BigDecimal amount;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class Contact {
+
+        @NotBlank
+        @Pattern(regexp = "^(P|K|I|Y|W)$", message = "must be 'P', 'K', 'I', 'Y', or 'W'")
+        private String type;
+
+        private String name;
+
+        @NotBlank
+        private String address;
+    }
 }
