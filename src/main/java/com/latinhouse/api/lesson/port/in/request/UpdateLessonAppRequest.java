@@ -50,8 +50,8 @@ public class UpdateLessonAppRequest {
         LocalDateTime startDateTime;
         LocalDateTime endDateTime;
         try {
-            startDateTime = LocalDateTime.parse(webReq.getStartDate() + " " + webReq.getStartTime(), formatter);
-            endDateTime = LocalDateTime.parse(webReq.getEndDate() + " " + webReq.getEndTime(), formatter);
+            startDateTime = LocalDateTime.parse(webReq.getOption().getStartDate() + " " + webReq.getOption().getStartTime(), formatter);
+            endDateTime = LocalDateTime.parse(webReq.getOption().getEndDate() + " " + webReq.getOption().getEndTime(), formatter);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date/time format.");
         }
@@ -77,14 +77,14 @@ public class UpdateLessonAppRequest {
         return UpdateLessonAppRequest.builder()
                 .title(webReq.getTitle())
                 .genre(Genre.of(webReq.getGenre()))
-                .region(Region.of(webReq.getRegion()))
+                .region(Region.of(webReq.getOption().getRegion()))
                 .instructorLo(webReq.getInstructorLo())
                 .instructorLa(webReq.getInstructorLa())
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)
                 .dateTimeSubTexts(webReq.getDateTimeSubTexts())
-                .place(webReq.getPlace())
-                .placeUrl(webReq.getPlaceUrl())
+                .place(webReq.getOption().getPlace())
+                .placeUrl(webReq.getOption().getPlaceUrl())
                 .price(webReq.getPrice())
                 .maxDiscountAmount(webReq.getMaxDiscountAmount())
                 .discountSubTexts(webReq.getDiscountSubTexts())

@@ -22,33 +22,14 @@ public class UpdateLessonWebRequest {
     @Pattern(regexp = "^(S|B)$", message = "must be 'S' or 'B'")
     private String genre;
 
-    @NotBlank
-    @Pattern(regexp = "^(GN|HD)$", message = "must be 'GN' or 'HD'")
-    private String region;
-
     private String instructorLo;
     private String instructorLa;
 
-    @NotBlank
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
-    private String startDate;
-
-    @NotBlank
-    @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
-    private String startTime;
-
-    @NotBlank
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
-    private String endDate;
-
-    @NotBlank
-    @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
-    private String endTime;
+    @NotNull
+    @Valid
+    private Option option;
 
     private List<String> dateTimeSubTexts;
-
-    private String place;
-    private String placeUrl;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
@@ -66,6 +47,34 @@ public class UpdateLessonWebRequest {
 
     @Valid
     private List<Contact> contacts;
+
+    @Getter
+    @NoArgsConstructor
+    public static class Option {
+
+        @NotBlank
+        @Pattern(regexp = "^(GN|HD)$", message = "must be 'GN' or 'HD'")
+        private String region;
+
+        private String place;
+        private String placeUrl;
+
+        @NotBlank
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
+        private String startDate;
+
+        @NotBlank
+        @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
+        private String startTime;
+
+        @NotBlank
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
+        private String endDate;
+
+        @NotBlank
+        @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
+        private String endTime;
+    }
 
     @Getter
     @NoArgsConstructor
