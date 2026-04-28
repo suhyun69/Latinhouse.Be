@@ -55,6 +55,9 @@ public class UpdateLessonAppRequest {
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid date/time format.");
         }
+        if (!startDateTime.isBefore(endDateTime)) {
+            throw new IllegalArgumentException("startDateTime must be before endDateTime.");
+        }
 
         List<Discount> discounts = webReq.getDiscounts() == null ? List.of() :
                 webReq.getDiscounts().stream()
