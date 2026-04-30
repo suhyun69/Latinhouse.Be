@@ -8,6 +8,8 @@ import com.latinhouse.api.lesson.port.out.DeleteLessonPort;
 import com.latinhouse.api.lesson.port.out.ReadLessonPort;
 import com.latinhouse.api.lesson.port.out.UpdateLessonPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,6 +43,12 @@ public class LessonPersistenceAdapter implements
         return lessonRepository.findAll().stream()
                 .map(lessonMapper::mapToDomainEntity)
                 .toList();
+    }
+
+    @Override
+    public Page<Lesson> findAll(Pageable pageable) {
+        return lessonRepository.findAllByOrderByNoDesc(pageable)
+                .map(lessonMapper::mapToDomainEntity);
     }
 
     @Override

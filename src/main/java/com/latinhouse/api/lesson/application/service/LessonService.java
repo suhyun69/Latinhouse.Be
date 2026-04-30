@@ -10,11 +10,14 @@ import com.latinhouse.api.lesson.port.in.UpdateLessonUseCase;
 import com.latinhouse.api.lesson.port.in.request.CreateLessonAppRequest;
 import com.latinhouse.api.lesson.port.in.request.UpdateLessonAppRequest;
 import com.latinhouse.api.lesson.port.in.response.LessonAppResponse;
+import com.latinhouse.api.lesson.port.in.response.PagedLessonAppResponse;
 import com.latinhouse.api.lesson.port.out.CreateLessonPort;
 import com.latinhouse.api.lesson.port.out.DeleteLessonPort;
 import com.latinhouse.api.lesson.port.out.ReadLessonPort;
 import com.latinhouse.api.lesson.port.out.UpdateLessonPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,6 +73,13 @@ public class LessonService implements
         return readLessonPort.findAll().stream()
                 .map(LessonAppResponse::new)
                 .toList();
+    }
+
+    @Override
+    public PagedLessonAppResponse findAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "no"));
+        return new PagedLessonAppResponse(
+                readLessonPort.findAll(pageRequest).map(LessonAppResponse::new));
     }
 
     @Override

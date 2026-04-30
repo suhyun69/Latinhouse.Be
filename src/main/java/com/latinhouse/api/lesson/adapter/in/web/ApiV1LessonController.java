@@ -2,7 +2,9 @@ package com.latinhouse.api.lesson.adapter.in.web;
 
 import com.latinhouse.api.lesson.adapter.in.web.request.CreateLessonWebRequest;
 import com.latinhouse.api.lesson.adapter.in.web.request.UpdateLessonWebRequest;
+import com.latinhouse.api.lesson.adapter.in.web.response.LessonDetailWebResponse;
 import com.latinhouse.api.lesson.adapter.in.web.response.LessonWebResponse;
+import com.latinhouse.api.lesson.adapter.in.web.response.PagedLessonWebResponse;
 import com.latinhouse.api.lesson.port.in.CreateLessonUseCase;
 import com.latinhouse.api.lesson.port.in.DeleteLessonUseCase;
 import com.latinhouse.api.lesson.port.in.FindLessonUseCase;
@@ -17,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/lessons")
 @Tag(name = "Lesson", description = "Lesson API")
@@ -32,34 +32,33 @@ public class ApiV1LessonController {
 
     @PostMapping
     @Operation(summary = "Create lesson")
-    public ResponseEntity<LessonWebResponse> create(@Valid @RequestBody CreateLessonWebRequest webReq) {
+    public ResponseEntity<LessonDetailWebResponse> create(@Valid @RequestBody CreateLessonWebRequest webReq) {
         CreateLessonAppRequest appReq = CreateLessonAppRequest.from(webReq);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new LessonWebResponse(createLessonUseCase.create(appReq)));
+                .body(new LessonDetailWebResponse(createLessonUseCase.create(appReq)));
     }
 
     @GetMapping("/{no}")
     @Operation(summary = "Find lesson by no")
-    public ResponseEntity<LessonWebResponse> findByNo(@PathVariable("no") Long no) {
-        return ResponseEntity.ok(new LessonWebResponse(findLessonUseCase.findByNo(no)));
+    public ResponseEntity<LessonDetailWebResponse> findByNo(@PathVariable("no") Long no) {
+        return ResponseEntity.ok(new LessonDetailWebResponse(findLessonUseCase.findByNo(no)));
     }
 
     @GetMapping
-    @Operation(summary = "Find all lessons")
-    public ResponseEntity<List<LessonWebResponse>> findAll() {
-        List<LessonWebResponse> responses = findLessonUseCase.findAll().stream()
-                .map(LessonWebResponse::new)
-                .toList();
-        return ResponseEntity.ok(responses);
+    @Operation(summary = "Find all lessons (paginated)")
+    public ResponseEntity<PagedLessonWebResponse> findAll(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size) {
+        return ResponseEntity.ok(new PagedLessonWebResponse(findLessonUseCase.findAll(page, size)));
     }
 
     @PutMapping("/{no}")
     @Operation(summary = "Update lesson")
-    public ResponseEntity<LessonWebResponse> update(
+    public ResponseEntity<LessonDetailWebResponse> update(
             @PathVariable("no") Long no,
             @Valid @RequestBody UpdateLessonWebRequest webReq) {
         UpdateLessonAppRequest appReq = UpdateLessonAppRequest.from(webReq);
-        return ResponseEntity.ok(new LessonWebResponse(updateLessonUseCase.update(no, appReq)));
+        return ResponseEntity.ok(new LessonDetailWebResponse(updateLessonUseCase.update(no, appReq)));
     }
 
     @DeleteMapping("/{no}")
