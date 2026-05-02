@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -24,20 +23,11 @@ public class LessonJpaEntity {
 
     private String title;
     private String genre;
-    private String region;
     private String instructorLo;
     private String instructorLa;
 
-    private LocalDateTime startDateTime;
-    private LocalDateTime endDateTime;
-
-    @ElementCollection
-    @CollectionTable(name = "lesson_datetime_sub_text", joinColumns = @JoinColumn(name = "lesson_no"))
-    @Column(name = "sub_text")
-    private List<String> dateTimeSubTexts;
-
-    private String place;
-    private String placeUrl;
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonOptionJpaEntity> options;
 
     private BigDecimal price;
     private BigDecimal maxDiscountAmount;

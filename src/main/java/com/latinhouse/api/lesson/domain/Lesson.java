@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -18,13 +17,7 @@ public class Lesson {
     private final String instructorLo;
     private final String instructorLa;
 
-    private final LocalDateTime startDateTime;
-    private final LocalDateTime endDateTime;
-    private final List<String> dateTimeSubTexts;
-
-    private final Region region;
-    private final String place;
-    private final String placeUrl;
+    private final List<LessonOption> options;
 
     private final BigDecimal price;
     private final BigDecimal maxDiscountAmount;

@@ -6,14 +6,10 @@ import com.latinhouse.api.lesson.domain.ContactType;
 import com.latinhouse.api.lesson.domain.Discount;
 import com.latinhouse.api.lesson.domain.DiscountType;
 import com.latinhouse.api.lesson.domain.Genre;
-import com.latinhouse.api.lesson.domain.Region;
 import lombok.Builder;
 import lombok.Value;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Value
@@ -22,14 +18,9 @@ public class CreateLessonAppRequest {
 
     String title;
     Genre genre;
-    Region region;
     String instructorLo;
     String instructorLa;
-    LocalDateTime startDateTime;
-    LocalDateTime endDateTime;
-    List<String> dateTimeSubTexts;
-    String place;
-    String placeUrl;
+    List<LessonOptionAppRequest> options;
     BigDecimal price;
     BigDecimal maxDiscountAmount;
     List<String> discountSubTexts;
@@ -46,18 +37,13 @@ public class CreateLessonAppRequest {
             throw new IllegalArgumentException("instructorLo 또는 instructorLa 중 하나는 필수입니다");
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startDateTime;
-        LocalDateTime endDateTime;
-        try {
-            startDateTime = LocalDateTime.parse(webReq.getOption().getStartDate() + " " + webReq.getOption().getStartTime(), formatter);
-            endDateTime = LocalDateTime.parse(webReq.getOption().getEndDate() + " " + webReq.getOption().getEndTime(), formatter);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date/time format.");
+        if (webReq.getOptions() == null || webReq.getOptions().isEmpty()) {
+            throw new IllegalArgumentException("options는 최소 1개 이상 필요합니다.");
         }
-        if (!startDateTime.isBefore(endDateTime)) {
-            throw new IllegalArgumentException("startDateTime must be before endDateTime.");
-        }
+
+        List<LessonOptionAppRequest> options = webReq.getOptions().stream()
+                .map(LessonOptionAppRequest::from)
+                .toList();
 
         List<Discount> discounts = webReq.getDiscounts() == null ? List.of() :
                 webReq.getDiscounts().stream()
@@ -77,18 +63,12 @@ public class CreateLessonAppRequest {
                                 .build())
                         .toList();
 
-
         return CreateLessonAppRequest.builder()
                 .title(webReq.getTitle())
                 .genre(Genre.of(webReq.getGenre()))
-                .region(Region.of(webReq.getOption().getRegion()))
                 .instructorLo(webReq.getInstructorLo())
                 .instructorLa(webReq.getInstructorLa())
-                .startDateTime(startDateTime)
-                .endDateTime(endDateTime)
-                .dateTimeSubTexts(webReq.getDateTimeSubTexts())
-                .place(webReq.getOption().getPlace())
-                .placeUrl(webReq.getOption().getPlaceUrl())
+                .options(options)
                 .price(webReq.getPrice())
                 .maxDiscountAmount(webReq.getMaxDiscountAmount())
                 .discountSubTexts(webReq.getDiscountSubTexts())

@@ -1,6 +1,7 @@
 package com.latinhouse.api.lesson.adapter.out.persistence;
 
 import com.latinhouse.api.lesson.adapter.out.persistence.entity.LessonJpaEntity;
+import com.latinhouse.api.lesson.adapter.out.persistence.entity.LessonOptionJpaEntity;
 import com.latinhouse.api.lesson.adapter.out.persistence.mapper.LessonMapper;
 import com.latinhouse.api.lesson.adapter.out.persistence.repository.LessonRepository;
 import com.latinhouse.api.lesson.domain.Lesson;
@@ -9,6 +10,8 @@ import com.latinhouse.api.lesson.port.out.CreateLessonPort;
 import com.latinhouse.api.lesson.port.out.DeleteLessonPort;
 import com.latinhouse.api.lesson.port.out.ReadLessonPort;
 import com.latinhouse.api.lesson.port.out.UpdateLessonPort;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -75,21 +78,21 @@ public class LessonPersistenceAdapter implements
      *
      * instructor 조건: instructorLo 또는 instructorLa 중 하나라도 일치(대소문자 무시 포함)하면 반환.
      *
-     * status 조건 (Lesson 자체의 startDateTime/endDateTime 기준):
-     *   stand_by  : startDateTime > now
-     *   in_progress: startDateTime <= now AND endDateTime >= now
-     *   done      : endDateTime < now
+     * status / region 조건: LessonOption을 LEFT JOIN하여 옵션 기준으로 필터링한다.
+     *   stand_by   : LessonOption 중 하나라도 startDateTime > now
+     *   in_progress: LessonOption 중 하나라도 startDateTime <= now AND endDateTime >= now
+     *   done       : LessonOption 중 하나라도 endDateTime < now
+     *   region     : LessonOption 중 하나라도 region == 요청값
      */
     private Specification<LessonJpaEntity> buildSpecification(FindLessonAppRequest searchReq) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // distinct: status/region JOIN으로 인한 중복 레슨 제거
+            query.distinct(true);
+
             if (searchReq.getGenre() != null) {
                 predicates.add(cb.equal(root.get("genre"), searchReq.getGenre().getCode()));
-            }
-
-            if (searchReq.getRegion() != null) {
-                predicates.add(cb.equal(root.get("region"), searchReq.getRegion().getCode()));
             }
 
             if (searchReq.getInstructor() != null) {
@@ -99,24 +102,33 @@ public class LessonPersistenceAdapter implements
                 predicates.add(cb.or(loMatch, laMatch));
             }
 
-            if (searchReq.getStatus() != null) {
-                LocalDateTime now = LocalDateTime.now();
-                switch (searchReq.getStatus()) {
-                    case stand_by ->
-                            predicates.add(cb.greaterThan(root.get("startDateTime"), now));
-                    case in_progress ->
-                            predicates.add(cb.and(
-                                    cb.lessThanOrEqualTo(root.get("startDateTime"), now),
-                                    cb.greaterThanOrEqualTo(root.get("endDateTime"), now)
-                            ));
-                    case done ->
-                            predicates.add(cb.lessThan(root.get("endDateTime"), now));
+            boolean needsOptionJoin = searchReq.getRegion() != null || searchReq.getStatus() != null;
+
+            if (needsOptionJoin) {
+                Join<LessonJpaEntity, LessonOptionJpaEntity> optionJoin =
+                        root.join("options", JoinType.LEFT);
+
+                if (searchReq.getRegion() != null) {
+                    predicates.add(cb.equal(optionJoin.get("region"), searchReq.getRegion().getCode()));
+                }
+
+                if (searchReq.getStatus() != null) {
+                    LocalDateTime now = LocalDateTime.now();
+                    switch (searchReq.getStatus()) {
+                        case stand_by ->
+                                predicates.add(cb.greaterThan(optionJoin.get("startDateTime"), now));
+                        case in_progress ->
+                                predicates.add(cb.and(
+                                        cb.lessThanOrEqualTo(optionJoin.get("startDateTime"), now),
+                                        cb.greaterThanOrEqualTo(optionJoin.get("endDateTime"), now)
+                                ));
+                        case done ->
+                                predicates.add(cb.lessThan(optionJoin.get("endDateTime"), now));
+                    }
                 }
             }
 
-            // 기본 정렬: no DESC (Pageable의 Sort 설정을 그대로 사용)
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 }
-

@@ -3,6 +3,7 @@ package com.latinhouse.api.lesson.adapter.in.web.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -25,11 +26,9 @@ public class CreateLessonWebRequest {
     private String instructorLo;
     private String instructorLa;
 
-    @NotNull
+    @NotEmpty
     @Valid
-    private Option option;
-
-    private List<String> dateTimeSubTexts;
+    private List<LessonOptionWebRequest> options;
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false)
@@ -47,34 +46,6 @@ public class CreateLessonWebRequest {
 
     @Valid
     private List<Contact> contacts;
-
-    @Getter
-    @NoArgsConstructor
-    public static class Option {
-
-        @NotBlank
-        @Pattern(regexp = "^(GN|HD)$", message = "must be 'GN' or 'HD'")
-        private String region;
-
-        private String place;
-        private String placeUrl;
-
-        @NotBlank
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
-        private String startDate;
-
-        @NotBlank
-        @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
-        private String startTime;
-
-        @NotBlank
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
-        private String endDate;
-
-        @NotBlank
-        @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "must match 'HH:mm'")
-        private String endTime;
-    }
 
     @Getter
     @NoArgsConstructor

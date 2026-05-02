@@ -3,12 +3,14 @@ package com.latinhouse.api.lesson.adapter.out.persistence.mapper;
 import com.latinhouse.api.lesson.adapter.out.persistence.entity.ContactJpaEntity;
 import com.latinhouse.api.lesson.adapter.out.persistence.entity.DiscountJpaEntity;
 import com.latinhouse.api.lesson.adapter.out.persistence.entity.LessonJpaEntity;
+import com.latinhouse.api.lesson.adapter.out.persistence.entity.LessonOptionJpaEntity;
 import com.latinhouse.api.lesson.domain.Contact;
 import com.latinhouse.api.lesson.domain.ContactType;
 import com.latinhouse.api.lesson.domain.Discount;
 import com.latinhouse.api.lesson.domain.DiscountType;
 import com.latinhouse.api.lesson.domain.Genre;
 import com.latinhouse.api.lesson.domain.Lesson;
+import com.latinhouse.api.lesson.domain.LessonOption;
 import com.latinhouse.api.lesson.domain.Region;
 import org.springframework.stereotype.Component;
 
@@ -18,18 +20,12 @@ import java.util.List;
 public class LessonMapper {
 
     public LessonJpaEntity mapToJpaEntity(Lesson lesson) {
-        return LessonJpaEntity.builder()
+        LessonJpaEntity entity = LessonJpaEntity.builder()
                 .no(lesson.getNo())
                 .title(lesson.getTitle())
                 .genre(lesson.getGenre().getCode())
-                .region(lesson.getRegion().getCode())
                 .instructorLo(lesson.getInstructorLo())
                 .instructorLa(lesson.getInstructorLa())
-                .startDateTime(lesson.getStartDateTime())
-                .endDateTime(lesson.getEndDateTime())
-                .dateTimeSubTexts(lesson.getDateTimeSubTexts())
-                .place(lesson.getPlace())
-                .placeUrl(lesson.getPlaceUrl())
                 .price(lesson.getPrice())
                 .maxDiscountAmount(lesson.getMaxDiscountAmount())
                 .discountSubTexts(lesson.getDiscountSubTexts())
@@ -39,6 +35,11 @@ public class LessonMapper {
                 .discounts(mapToDiscountEntities(lesson.getDiscounts()))
                 .contacts(mapToContactEntities(lesson.getContacts()))
                 .build();
+
+        List<LessonOptionJpaEntity> optionEntities = mapToOptionEntities(lesson.getOptions(), entity);
+        entity.setOptions(optionEntities);
+
+        return entity;
     }
 
     public Lesson mapToDomainEntity(LessonJpaEntity entity) {
@@ -46,14 +47,9 @@ public class LessonMapper {
                 .no(entity.getNo())
                 .title(entity.getTitle())
                 .genre(Genre.of(entity.getGenre()))
-                .region(Region.of(entity.getRegion()))
                 .instructorLo(entity.getInstructorLo())
                 .instructorLa(entity.getInstructorLa())
-                .startDateTime(entity.getStartDateTime())
-                .endDateTime(entity.getEndDateTime())
-                .dateTimeSubTexts(entity.getDateTimeSubTexts())
-                .place(entity.getPlace())
-                .placeUrl(entity.getPlaceUrl())
+                .options(mapToOptionDomains(entity.getOptions()))
                 .price(entity.getPrice())
                 .maxDiscountAmount(entity.getMaxDiscountAmount())
                 .discountSubTexts(entity.getDiscountSubTexts())
@@ -63,6 +59,37 @@ public class LessonMapper {
                 .discounts(mapToDiscountDomains(entity.getDiscounts()))
                 .contacts(mapToContactDomains(entity.getContacts()))
                 .build();
+    }
+
+    private List<LessonOptionJpaEntity> mapToOptionEntities(List<LessonOption> options, LessonJpaEntity lessonEntity) {
+        if (options == null) return List.of();
+        return options.stream()
+                .map(o -> LessonOptionJpaEntity.builder()
+                        .id(o.getId())
+                        .lesson(lessonEntity)
+                        .startDateTime(o.getStartDateTime())
+                        .endDateTime(o.getEndDateTime())
+                        .dateTimeSubTexts(o.getDateTimeSubTexts())
+                        .region(o.getRegion().getCode())
+                        .place(o.getPlace())
+                        .placeUrl(o.getPlaceUrl())
+                        .build())
+                .toList();
+    }
+
+    private List<LessonOption> mapToOptionDomains(List<LessonOptionJpaEntity> entities) {
+        if (entities == null) return List.of();
+        return entities.stream()
+                .map(e -> LessonOption.builder()
+                        .id(e.getId())
+                        .startDateTime(e.getStartDateTime())
+                        .endDateTime(e.getEndDateTime())
+                        .dateTimeSubTexts(e.getDateTimeSubTexts())
+                        .region(Region.of(e.getRegion()))
+                        .place(e.getPlace())
+                        .placeUrl(e.getPlaceUrl())
+                        .build())
+                .toList();
     }
 
     private List<DiscountJpaEntity> mapToDiscountEntities(List<Discount> discounts) {
