@@ -10,6 +10,7 @@ import com.latinhouse.api.lesson.port.in.DeleteLessonUseCase;
 import com.latinhouse.api.lesson.port.in.FindLessonUseCase;
 import com.latinhouse.api.lesson.port.in.UpdateLessonUseCase;
 import com.latinhouse.api.lesson.port.in.request.CreateLessonAppRequest;
+import com.latinhouse.api.lesson.port.in.request.FindLessonAppRequest;
 import com.latinhouse.api.lesson.port.in.request.UpdateLessonAppRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,11 +46,16 @@ public class ApiV1LessonController {
     }
 
     @GetMapping
-    @Operation(summary = "Find all lessons (paginated)")
+    @Operation(summary = "Find all lessons (paginated, with optional filters)")
     public ResponseEntity<PagedLessonWebResponse> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size) {
-        return ResponseEntity.ok(new PagedLessonWebResponse(findLessonUseCase.findAll(page, size)));
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "genre", required = false) String genre,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "instructor", required = false) String instructor,
+            @RequestParam(value = "status", required = false) String status) {
+        FindLessonAppRequest searchReq = FindLessonAppRequest.of(genre, region, instructor, status);
+        return ResponseEntity.ok(new PagedLessonWebResponse(findLessonUseCase.findAll(page, size, searchReq)));
     }
 
     @PutMapping("/{no}")

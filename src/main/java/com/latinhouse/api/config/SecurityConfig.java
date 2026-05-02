@@ -28,6 +28,24 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/h2-console/**"
                         ).permitAll()
+                        // Lesson: GET 조회 공개, PUT/PATCH/DELETE 인증 필요
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.GET,
+                                "/api/v1/lessons",
+                                "/api/v1/lessons/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.PUT,
+                                "/api/v1/lessons/**"
+                        ).authenticated()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.PATCH,
+                                "/api/v1/lessons/**"
+                        ).authenticated()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.DELETE,
+                                "/api/v1/lessons/**"
+                        ).authenticated()
                         .anyRequest().permitAll()
                 );
 

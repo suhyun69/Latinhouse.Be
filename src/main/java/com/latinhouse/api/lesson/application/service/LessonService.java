@@ -8,6 +8,7 @@ import com.latinhouse.api.lesson.port.in.DeleteLessonUseCase;
 import com.latinhouse.api.lesson.port.in.FindLessonUseCase;
 import com.latinhouse.api.lesson.port.in.UpdateLessonUseCase;
 import com.latinhouse.api.lesson.port.in.request.CreateLessonAppRequest;
+import com.latinhouse.api.lesson.port.in.request.FindLessonAppRequest;
 import com.latinhouse.api.lesson.port.in.request.UpdateLessonAppRequest;
 import com.latinhouse.api.lesson.port.in.response.LessonAppResponse;
 import com.latinhouse.api.lesson.port.in.response.PagedLessonAppResponse;
@@ -76,10 +77,10 @@ public class LessonService implements
     }
 
     @Override
-    public PagedLessonAppResponse findAll(int page, int size) {
+    public PagedLessonAppResponse findAll(int page, int size, FindLessonAppRequest searchReq) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "no"));
         return new PagedLessonAppResponse(
-                readLessonPort.findAll(pageRequest).map(LessonAppResponse::new));
+                readLessonPort.findAll(pageRequest, searchReq).map(LessonAppResponse::new));
     }
 
     @Override
