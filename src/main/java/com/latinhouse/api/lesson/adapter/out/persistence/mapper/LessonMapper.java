@@ -65,7 +65,7 @@ public class LessonMapper {
         if (options == null) return List.of();
         return options.stream()
                 .map(o -> LessonOptionJpaEntity.builder()
-                        .id(o.getId())
+                        .no(o.getNo())
                         .lesson(lessonEntity)
                         .startDateTime(o.getStartDateTime())
                         .endDateTime(o.getEndDateTime())
@@ -81,7 +81,7 @@ public class LessonMapper {
         if (entities == null) return List.of();
         return entities.stream()
                 .map(e -> LessonOption.builder()
-                        .id(e.getId())
+                        .no(e.getNo())
                         .startDateTime(e.getStartDateTime())
                         .endDateTime(e.getEndDateTime())
                         .dateTimeSubTexts(e.getDateTimeSubTexts())

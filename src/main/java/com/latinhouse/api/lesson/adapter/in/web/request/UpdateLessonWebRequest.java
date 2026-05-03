@@ -51,6 +51,8 @@ public class UpdateLessonWebRequest {
     @NoArgsConstructor
     public static class Discount {
 
+        private Long id;
+
         @NotBlank
         @Pattern(regexp = "^(E|S)$", message = "must be 'E' or 'S'")
         private String type;
@@ -65,6 +67,8 @@ public class UpdateLessonWebRequest {
     @Getter
     @NoArgsConstructor
     public static class Contact {
+
+        private Long id;
 
         @NotBlank
         @Pattern(regexp = "^(P|K|I|Y|W)$", message = "must be 'P', 'K', 'I', 'Y', or 'W'")

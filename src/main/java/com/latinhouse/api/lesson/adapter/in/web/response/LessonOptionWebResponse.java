@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class LessonOptionWebResponse {
 
-    private final String id;
+    private final Long no;
     private final LocalDateTime startDateTime;
     private final LocalDateTime endDateTime;
     private final List<String> dateTimeSubTexts;
@@ -19,7 +19,7 @@ public class LessonOptionWebResponse {
     private final String placeUrl;
 
     public LessonOptionWebResponse(LessonOptionAppResponse appResponse) {
-        this.id = appResponse.getId();
+        this.no = appResponse.getNo();
         this.startDateTime = appResponse.getStartDateTime();
         this.endDateTime = appResponse.getEndDateTime();
         this.dateTimeSubTexts = appResponse.getDateTimeSubTexts();

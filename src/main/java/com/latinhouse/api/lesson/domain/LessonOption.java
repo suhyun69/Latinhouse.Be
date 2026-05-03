@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 public class LessonOption {
 
-    private final String id;             // 8-char alphanumeric, generated in Service
+    private final Long no;
     private final LocalDateTime startDateTime;
     private final LocalDateTime endDateTime;
     private final List<String> dateTimeSubTexts;

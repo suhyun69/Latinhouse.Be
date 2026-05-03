@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class LessonOptionAppRequest {
 
+    Long no;
     LocalDateTime startDateTime;
     LocalDateTime endDateTime;
     List<String> dateTimeSubTexts;
@@ -36,6 +37,7 @@ public class LessonOptionAppRequest {
         }
 
         return LessonOptionAppRequest.builder()
+                .no(webReq.getNo())
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)
                 .dateTimeSubTexts(webReq.getDateTimeSubTexts())

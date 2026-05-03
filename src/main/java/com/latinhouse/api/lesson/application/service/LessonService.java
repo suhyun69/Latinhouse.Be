@@ -2,6 +2,10 @@ package com.latinhouse.api.lesson.application.service;
 
 import com.latinhouse.api.global.exception.CustomException;
 import com.latinhouse.api.global.exception.ErrorCode;
+import com.latinhouse.api.lesson.domain.Contact;
+import com.latinhouse.api.lesson.domain.ContactType;
+import com.latinhouse.api.lesson.domain.Discount;
+import com.latinhouse.api.lesson.domain.DiscountType;
 import com.latinhouse.api.lesson.domain.Lesson;
 import com.latinhouse.api.lesson.domain.LessonOption;
 import com.latinhouse.api.lesson.port.in.CreateLessonUseCase;
@@ -23,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 @Service
@@ -34,10 +37,6 @@ public class LessonService implements
         UpdateLessonUseCase,
         DeleteLessonUseCase {
 
-    private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static final int ID_LENGTH = 8;
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-
     private final CreateLessonPort createLessonPort;
     private final ReadLessonPort readLessonPort;
     private final UpdateLessonPort updateLessonPort;
@@ -45,7 +44,7 @@ public class LessonService implements
 
     @Override
     public LessonAppResponse create(CreateLessonAppRequest appReq) {
-        List<LessonOption> options = buildOptions(appReq.getOptions());
+        List<LessonOption> options = buildOptionsForCreate(appReq.getOptions());
 
         Lesson lesson = Lesson.builder()
                 .title(appReq.getTitle())
@@ -92,7 +91,27 @@ public class LessonService implements
         Lesson existing = readLessonPort.findByNo(no)
                 .orElseThrow(() -> new CustomException(ErrorCode.LESSON_NOT_FOUND));
 
-        List<LessonOption> options = buildOptions(appReq.getOptions());
+        List<LessonOption> options = buildOptionsForUpdate(appReq.getOptions());
+
+        List<Discount> discounts = appReq.getDiscounts() == null ? List.of() :
+                appReq.getDiscounts().stream()
+                        .map(d -> Discount.builder()
+                                .id(d.getId())
+                                .type(d.getType())
+                                .condition(d.getCondition())
+                                .amount(d.getAmount())
+                                .build())
+                        .toList();
+
+        List<Contact> contacts = appReq.getContacts() == null ? List.of() :
+                appReq.getContacts().stream()
+                        .map(c -> Contact.builder()
+                                .id(c.getId())
+                                .type(c.getType())
+                                .name(c.getName())
+                                .address(c.getAddress())
+                                .build())
+                        .toList();
 
         Lesson updated = Lesson.builder()
                 .no(existing.getNo())
@@ -107,8 +126,8 @@ public class LessonService implements
                 .bank(appReq.getBank())
                 .accountNumber(appReq.getAccountNumber())
                 .accountOwner(appReq.getAccountOwner())
-                .discounts(appReq.getDiscounts())
-                .contacts(appReq.getContacts())
+                .discounts(discounts)
+                .contacts(contacts)
                 .build();
 
         return new LessonAppResponse(updateLessonPort.update(updated));
@@ -121,11 +140,10 @@ public class LessonService implements
         deleteLessonPort.delete(no);
     }
 
-    private List<LessonOption> buildOptions(List<LessonOptionAppRequest> optionRequests) {
+    private List<LessonOption> buildOptionsForCreate(List<LessonOptionAppRequest> optionRequests) {
         if (optionRequests == null) return List.of();
         return optionRequests.stream()
                 .map(req -> LessonOption.builder()
-                        .id(generateId())
                         .startDateTime(req.getStartDateTime())
                         .endDateTime(req.getEndDateTime())
                         .dateTimeSubTexts(req.getDateTimeSubTexts())
@@ -136,11 +154,18 @@ public class LessonService implements
                 .toList();
     }
 
-    private String generateId() {
-        StringBuilder sb = new StringBuilder(ID_LENGTH);
-        for (int i = 0; i < ID_LENGTH; i++) {
-            sb.append(ALPHANUMERIC.charAt(SECURE_RANDOM.nextInt(ALPHANUMERIC.length())));
-        }
-        return sb.toString();
+    private List<LessonOption> buildOptionsForUpdate(List<LessonOptionAppRequest> optionRequests) {
+        if (optionRequests == null) return List.of();
+        return optionRequests.stream()
+                .map(req -> LessonOption.builder()
+                        .no(req.getNo())    // null → 신규(DB 자동채번), 값 있음 → 기존 레코드 재사용
+                        .startDateTime(req.getStartDateTime())
+                        .endDateTime(req.getEndDateTime())
+                        .dateTimeSubTexts(req.getDateTimeSubTexts())
+                        .region(req.getRegion())
+                        .place(req.getPlace())
+                        .placeUrl(req.getPlaceUrl())
+                        .build())
+                .toList();
     }
 }

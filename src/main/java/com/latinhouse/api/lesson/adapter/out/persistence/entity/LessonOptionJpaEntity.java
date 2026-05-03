@@ -18,7 +18,8 @@ import java.util.List;
 public class LessonOptionJpaEntity {
 
     @Id
-    private String id;   // 8-char alphanumeric, set by Service
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long no;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_no", nullable = false)
@@ -29,7 +30,7 @@ public class LessonOptionJpaEntity {
 
     @ElementCollection
     @CollectionTable(name = "lesson_option_datetime_sub_text",
-            joinColumns = @JoinColumn(name = "lesson_option_id"))
+            joinColumns = @JoinColumn(name = "lesson_option_no"))
     @Column(name = "sub_text")
     private List<String> dateTimeSubTexts;
 

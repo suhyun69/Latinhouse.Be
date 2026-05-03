@@ -11,6 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class LessonOptionWebRequest {
 
+    private Long no;
+
     @NotBlank
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "must match 'yyyy-MM-dd'")
     private String startDate;

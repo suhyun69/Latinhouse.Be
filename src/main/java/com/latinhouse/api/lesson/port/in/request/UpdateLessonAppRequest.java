@@ -1,9 +1,7 @@
 package com.latinhouse.api.lesson.port.in.request;
 
 import com.latinhouse.api.lesson.adapter.in.web.request.UpdateLessonWebRequest;
-import com.latinhouse.api.lesson.domain.Contact;
 import com.latinhouse.api.lesson.domain.ContactType;
-import com.latinhouse.api.lesson.domain.Discount;
 import com.latinhouse.api.lesson.domain.DiscountType;
 import com.latinhouse.api.lesson.domain.Genre;
 import lombok.Builder;
@@ -27,8 +25,8 @@ public class UpdateLessonAppRequest {
     String bank;
     String accountNumber;
     String accountOwner;
-    List<Discount> discounts;
-    List<Contact> contacts;
+    List<DiscountAppRequest> discounts;
+    List<ContactAppRequest> contacts;
 
     public static UpdateLessonAppRequest from(UpdateLessonWebRequest webReq) {
         boolean loBlank = webReq.getInstructorLo() == null || webReq.getInstructorLo().isBlank();
@@ -45,18 +43,20 @@ public class UpdateLessonAppRequest {
                 .map(LessonOptionAppRequest::from)
                 .toList();
 
-        List<Discount> discounts = webReq.getDiscounts() == null ? List.of() :
+        List<DiscountAppRequest> discounts = webReq.getDiscounts() == null ? List.of() :
                 webReq.getDiscounts().stream()
-                        .map(d -> Discount.builder()
+                        .map(d -> DiscountAppRequest.builder()
+                                .id(d.getId())
                                 .type(DiscountType.of(d.getType()))
                                 .condition(d.getCondition())
                                 .amount(d.getAmount())
                                 .build())
                         .toList();
 
-        List<Contact> contacts = webReq.getContacts() == null ? List.of() :
+        List<ContactAppRequest> contacts = webReq.getContacts() == null ? List.of() :
                 webReq.getContacts().stream()
-                        .map(c -> Contact.builder()
+                        .map(c -> ContactAppRequest.builder()
+                                .id(c.getId())
                                 .type(ContactType.of(c.getType()))
                                 .name(c.getName())
                                 .address(c.getAddress())
@@ -78,5 +78,23 @@ public class UpdateLessonAppRequest {
                 .discounts(discounts)
                 .contacts(contacts)
                 .build();
+    }
+
+    @Value
+    @Builder
+    public static class DiscountAppRequest {
+        Long id;
+        DiscountType type;
+        String condition;
+        BigDecimal amount;
+    }
+
+    @Value
+    @Builder
+    public static class ContactAppRequest {
+        Long id;
+        ContactType type;
+        String name;
+        String address;
     }
 }
