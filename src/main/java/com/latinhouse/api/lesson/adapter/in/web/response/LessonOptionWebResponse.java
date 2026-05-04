@@ -17,6 +17,7 @@ public class LessonOptionWebResponse {
     private final Region region;
     private final String place;
     private final String placeUrl;
+    private final String status;
 
     public LessonOptionWebResponse(LessonOptionAppResponse appResponse) {
         this.no = appResponse.getNo();
@@ -26,5 +27,6 @@ public class LessonOptionWebResponse {
         this.region = appResponse.getRegion();
         this.place = appResponse.getPlace();
         this.placeUrl = appResponse.getPlaceUrl();
+        this.status = appResponse.getStatus().name();
     }
 }

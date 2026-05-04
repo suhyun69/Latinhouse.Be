@@ -1,6 +1,7 @@
 package com.latinhouse.api.lesson.port.in.response;
 
 import com.latinhouse.api.lesson.domain.LessonOption;
+import com.latinhouse.api.lesson.domain.LessonStatus;
 import com.latinhouse.api.lesson.domain.Region;
 import lombok.Getter;
 
@@ -17,6 +18,7 @@ public class LessonOptionAppResponse {
     private final Region region;
     private final String place;
     private final String placeUrl;
+    private final LessonStatus status;
 
     public LessonOptionAppResponse(LessonOption option) {
         this.no = option.getNo();
@@ -26,5 +28,6 @@ public class LessonOptionAppResponse {
         this.region = option.getRegion();
         this.place = option.getPlace();
         this.placeUrl = option.getPlaceUrl();
+        this.status = option.status();
     }
 }
