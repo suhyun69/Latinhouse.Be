@@ -46,28 +46,11 @@ public class SecurityConfig {
                                 org.springframework.http.HttpMethod.DELETE,
                                 "/api/v1/lessons/**"
                         ).authenticated()
-                        // Profile: GET 조회 공개, POST/PUT/PATCH/DELETE 인증 필요
+                        // Profile: JWT 필터 미구현으로 전체 임시 허용
                         .requestMatchers(
-                                org.springframework.http.HttpMethod.GET,
                                 "/api/v1/profiles",
                                 "/api/v1/profiles/**"
                         ).permitAll()
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.POST,
-                                "/api/v1/profiles"
-                        ).authenticated()
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.PUT,
-                                "/api/v1/profiles/**"
-                        ).authenticated()
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.PATCH,
-                                "/api/v1/profiles/**"
-                        ).authenticated()
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.DELETE,
-                                "/api/v1/profiles/**"
-                        ).authenticated()
                         .anyRequest().permitAll()
                 );
 
