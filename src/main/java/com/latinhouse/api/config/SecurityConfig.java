@@ -46,15 +46,15 @@ public class SecurityConfig {
                                 org.springframework.http.HttpMethod.DELETE,
                                 "/api/v1/lessons/**"
                         ).authenticated()
-                        // Profile: POST 생성, GET 조회, PUT/PATCH/DELETE 수정·삭제 모두 인증 필요
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.POST,
-                                "/api/v1/profiles"
-                        ).authenticated()
+                        // Profile: GET 조회 공개, POST/PUT/PATCH/DELETE 인증 필요
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.GET,
                                 "/api/v1/profiles",
                                 "/api/v1/profiles/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/v1/profiles"
                         ).authenticated()
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.PUT,

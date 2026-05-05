@@ -10,6 +10,7 @@ import com.latinhouse.api.profile.port.in.DeleteProfileUseCase;
 import com.latinhouse.api.profile.port.in.FindProfileUseCase;
 import com.latinhouse.api.profile.port.in.UpdateProfileUseCase;
 import com.latinhouse.api.profile.port.in.request.CreateProfileAppRequest;
+import com.latinhouse.api.profile.port.in.request.FindProfileAppRequest;
 import com.latinhouse.api.profile.port.in.request.RegisterInstructorAppRequest;
 import com.latinhouse.api.profile.port.in.request.UpdateProfileAppRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,8 +44,12 @@ public class ApiV1ProfileController {
     @Operation(summary = "Find all profiles (paginated)")
     public ResponseEntity<PagedProfileWebResponse> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size) {
-        return ResponseEntity.ok(new PagedProfileWebResponse(findProfileUseCase.findAll(page, size)));
+            @RequestParam(value = "size", defaultValue = "20") int size,
+            @RequestParam(value = "nickname", required = false) String nickname,
+            @RequestParam(value = "sex", required = false) String sex,
+            @RequestParam(value = "isInstructor", required = false) Boolean isInstructor) {
+        FindProfileAppRequest searchReq = FindProfileAppRequest.of(nickname, sex, isInstructor);
+        return ResponseEntity.ok(new PagedProfileWebResponse(findProfileUseCase.findAll(page, size, searchReq)));
     }
 
     @GetMapping("/{profileId}")

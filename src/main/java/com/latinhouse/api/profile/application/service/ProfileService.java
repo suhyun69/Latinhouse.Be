@@ -8,6 +8,7 @@ import com.latinhouse.api.profile.port.in.DeleteProfileUseCase;
 import com.latinhouse.api.profile.port.in.FindProfileUseCase;
 import com.latinhouse.api.profile.port.in.UpdateProfileUseCase;
 import com.latinhouse.api.profile.port.in.request.CreateProfileAppRequest;
+import com.latinhouse.api.profile.port.in.request.FindProfileAppRequest;
 import com.latinhouse.api.profile.port.in.request.RegisterInstructorAppRequest;
 import com.latinhouse.api.profile.port.in.request.UpdateProfileAppRequest;
 import com.latinhouse.api.profile.port.in.response.PagedProfileAppResponse;
@@ -60,10 +61,10 @@ public class ProfileService implements CreateProfileUseCase, FindProfileUseCase,
     }
 
     @Override
-    public PagedProfileAppResponse findAll(int page, int size) {
+    public PagedProfileAppResponse findAll(int page, int size, FindProfileAppRequest searchReq) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "profileId"));
         return new PagedProfileAppResponse(
-                readProfilePort.findAll(pageRequest).map(ProfileAppResponse::new));
+                readProfilePort.findAll(pageRequest, searchReq).map(ProfileAppResponse::new));
     }
 
     @Override
