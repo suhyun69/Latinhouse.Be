@@ -22,6 +22,9 @@ import com.latinhouse.api.lesson.port.out.CreateLessonPort;
 import com.latinhouse.api.lesson.port.out.DeleteLessonPort;
 import com.latinhouse.api.lesson.port.out.ReadLessonPort;
 import com.latinhouse.api.lesson.port.out.UpdateLessonPort;
+import com.latinhouse.api.profile.domain.Profile;
+import com.latinhouse.api.profile.domain.Sex;
+import com.latinhouse.api.profile.port.out.ReadProfilePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,16 +44,18 @@ public class LessonService implements
     private final ReadLessonPort readLessonPort;
     private final UpdateLessonPort updateLessonPort;
     private final DeleteLessonPort deleteLessonPort;
+    private final ReadProfilePort readProfilePort;
 
     @Override
     public LessonAppResponse create(CreateLessonAppRequest appReq) {
+        Profile instructor = resolveInstructor(appReq.getInstructorProfileId());
         List<LessonOption> options = buildOptionsForCreate(appReq.getOptions());
 
         Lesson lesson = Lesson.builder()
                 .title(appReq.getTitle())
                 .genre(appReq.getGenre())
-                .instructorLo(appReq.getInstructorLo())
-                .instructorLa(appReq.getInstructorLa())
+                .instructorLo(instructor.getSex() == Sex.M ? instructor.getNickname() : null)
+                .instructorLa(instructor.getSex() == Sex.F ? instructor.getNickname() : null)
                 .options(options)
                 .price(appReq.getPrice())
                 .maxDiscountAmount(appReq.getMaxDiscountAmount())
@@ -91,6 +96,7 @@ public class LessonService implements
         Lesson existing = readLessonPort.findByNo(no)
                 .orElseThrow(() -> new CustomException(ErrorCode.LESSON_NOT_FOUND));
 
+        Profile instructor = resolveInstructor(appReq.getInstructorProfileId());
         List<LessonOption> options = buildOptionsForUpdate(appReq.getOptions());
 
         List<Discount> discounts = appReq.getDiscounts() == null ? List.of() :
@@ -117,8 +123,8 @@ public class LessonService implements
                 .no(existing.getNo())
                 .title(appReq.getTitle())
                 .genre(appReq.getGenre())
-                .instructorLo(appReq.getInstructorLo())
-                .instructorLa(appReq.getInstructorLa())
+                .instructorLo(instructor.getSex() == Sex.M ? instructor.getNickname() : null)
+                .instructorLa(instructor.getSex() == Sex.F ? instructor.getNickname() : null)
                 .options(options)
                 .price(appReq.getPrice())
                 .maxDiscountAmount(appReq.getMaxDiscountAmount())
@@ -138,6 +144,15 @@ public class LessonService implements
         readLessonPort.findByNo(no)
                 .orElseThrow(() -> new CustomException(ErrorCode.LESSON_NOT_FOUND));
         deleteLessonPort.delete(no);
+    }
+
+    private Profile resolveInstructor(String instructorProfileId) {
+        Profile profile = readProfilePort.findById(instructorProfileId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROFILE_NOT_FOUND));
+        if (!Boolean.TRUE.equals(profile.getIsInstructor())) {
+            throw new CustomException(ErrorCode.NOT_AN_INSTRUCTOR);
+        }
+        return profile;
     }
 
     private List<LessonOption> buildOptionsForCreate(List<LessonOptionAppRequest> optionRequests) {

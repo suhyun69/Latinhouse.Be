@@ -18,8 +18,7 @@ public class CreateLessonAppRequest {
 
     String title;
     Genre genre;
-    String instructorLo;
-    String instructorLa;
+    String instructorProfileId;
     List<LessonOptionAppRequest> options;
     BigDecimal price;
     BigDecimal maxDiscountAmount;
@@ -31,12 +30,6 @@ public class CreateLessonAppRequest {
     List<Contact> contacts;
 
     public static CreateLessonAppRequest from(CreateLessonWebRequest webReq) {
-        boolean loBlank = webReq.getInstructorLo() == null || webReq.getInstructorLo().isBlank();
-        boolean laBlank = webReq.getInstructorLa() == null || webReq.getInstructorLa().isBlank();
-        if (loBlank && laBlank) {
-            throw new IllegalArgumentException("instructorLo 또는 instructorLa 중 하나는 필수입니다");
-        }
-
         if (webReq.getOptions() == null || webReq.getOptions().isEmpty()) {
             throw new IllegalArgumentException("options는 최소 1개 이상 필요합니다.");
         }
@@ -66,8 +59,7 @@ public class CreateLessonAppRequest {
         return CreateLessonAppRequest.builder()
                 .title(webReq.getTitle())
                 .genre(Genre.of(webReq.getGenre()))
-                .instructorLo(webReq.getInstructorLo())
-                .instructorLa(webReq.getInstructorLa())
+                .instructorProfileId(webReq.getInstructorProfileId())
                 .options(options)
                 .price(webReq.getPrice())
                 .maxDiscountAmount(webReq.getMaxDiscountAmount())
