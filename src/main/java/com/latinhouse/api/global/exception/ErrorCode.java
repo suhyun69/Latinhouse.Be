@@ -10,6 +10,7 @@ public enum ErrorCode {
     PROFILE_NOT_FOUND("프로필을 찾을 수 없습니다", HttpStatus.NOT_FOUND),
 
     NOT_AN_INSTRUCTOR("강사로 등록된 프로필이 아닙니다", HttpStatus.BAD_REQUEST),
+    SEX_MISMATCH("강사의 성별이 일치하지 않습니다", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST("잘못된 요청입니다", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED("", HttpStatus.UNAUTHORIZED);
 

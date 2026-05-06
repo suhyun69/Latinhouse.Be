@@ -23,8 +23,9 @@ public class CreateLessonWebRequest {
     @Pattern(regexp = "^(S|B)$", message = "must be 'S' or 'B'")
     private String genre;
 
-    @NotBlank
-    private String instructorProfileId;
+    private String instructorLo;
+
+    private String instructorLa;
 
     @NotEmpty
     @Valid
